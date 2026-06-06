@@ -7,8 +7,7 @@
 Требуемые настройки:
 
 - pull request обязателен перед merge;
-- минимум одно approval;
-- последний push сбрасывает старые approvals;
+- approval пока не обязателен, так как у репозитория один collaborator;
 - review conversations должны быть закрыты;
 - CI check `Format, build, and test` обязателен;
 - branch должна быть актуальна перед merge;
@@ -16,28 +15,18 @@
 - deletion `main` запрещен;
 - правила применяются и к администраторам;
 
-## Current GitHub Limitation
+## Current GitHub Protection
 
-На дату 2026-06-06 GitHub API возвращает `403` для Branch Protection и Repository Rulesets:
+На дату 2026-06-06 публичный репозиторий защищает `main` серверными правилами GitHub:
 
-```text
-Upgrade to GitHub Pro or make this repository public to enable this feature.
-```
+- изменения попадают в `main` только через pull request;
+- required check `Format, build, and test` должен пройти, а branch должна быть актуальна;
+- review conversations должны быть закрыты;
+- force push и deletion запрещены;
+- linear history обязательна;
+- правила применяются к администраторам.
 
-Репозиторий приватный и находится на бесплатном personal plan. Поэтому GitHub сейчас не может технически запретить direct push или force push.
-
-Варианты включения реальной защиты:
-
-1. Подключить GitHub Pro для владельца приватного репозитория.
-2. Сделать репозиторий public.
-3. Перенести репозиторий в организацию с тарифом, поддерживающим protected branches для private repositories.
-
-До устранения ограничения команда следует процессу добровольно:
-
-- любые изменения выполняются в `codex/*` или feature branches;
-- изменения попадают в `main` через pull request;
-- merge выполняется только после зеленого CI;
-- прямой push и force push в `main` запрещены процессом, но пока не GitHub-политикой.
+Обязательный approval временно отключен: единственный collaborator не может одобрить собственный pull request. После добавления второго reviewer следует включить минимум одно approval и сброс approvals после последнего push.
 
 Для текущего clone настроен версионируемый `.githooks/pre-push`, который блокирует обычный direct push в `main`. Он подключается командой:
 
@@ -47,12 +36,12 @@ git config core.hooksPath .githooks
 
 Hook является дополнительным локальным guardrail, но не серверной защитой: его можно обойти через `--no-verify`, GitHub API или другой clone.
 
-## Applying Protection After Upgrade
+## Protection Verification
 
-После изменения тарифа настроить branch protection или ruleset и проверить:
+При изменении правил проверить:
 
 - direct push отклоняется;
 - force push отклоняется;
 - merge без CI отклоняется;
-- merge без approval отклоняется;
+- после добавления второго reviewer merge без approval отклоняется;
 - deletion `main` отклоняется.
