@@ -205,6 +205,7 @@ fixtures/
 ## Связанные документы
 
 - [ADR-0001](../adr/0001-local-ai-race-engineer-overlay.md)
+- [Agent execution plan](0002-agent-execution-plan.md)
 - [C#/.NET iRacing SDK libraries](../research/0002-dotnet-iracing-sdk-libraries.md)
 - [Local STT/TTS stack](../research/0003-local-stt-tts-stack.md)
 - [Strategy Engine architecture](../architecture/0001-strategy-engine.md)

@@ -74,6 +74,7 @@ flowchart LR
 - [Исследование локального STT/TTS стека](docs/research/0003-local-stt-tts-stack.md)
 - [Архитектура Strategy Engine](docs/architecture/0001-strategy-engine.md)
 - [Общий технический roadmap](docs/plan/0001-technical-roadmap.md)
+- [Agent-ready execution plan](docs/plan/0002-agent-execution-plan.md)
 
 Следующий milestone — `Replay Fuel Engineer`: детерминированные расчеты топлива и голосовые ответы над replay fixture без запущенного iRacing.
 
