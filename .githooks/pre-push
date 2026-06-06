@@ -1,0 +1,13 @@
+#!/bin/sh
+
+protected_ref="refs/heads/main"
+
+while read -r local_ref local_sha remote_ref remote_sha
+do
+  if [ "$remote_ref" = "$protected_ref" ]; then
+    echo "Direct pushes to main are blocked. Push a feature branch and merge it through a pull request." >&2
+    exit 1
+  fi
+done
+
+exit 0

@@ -66,6 +66,7 @@ git diff --check
 - Изменения solution, central package management и общих build-файлов выполняет только integration task.
 - Контракты сначала согласуются отдельной задачей; implementation-задачи зависят от них.
 - Агент не должен отменять или переписывать изменения других агентов.
+- Агент никогда не пушит напрямую в `main`; используется feature branch и pull request.
 
 ## Task Completion Report
 

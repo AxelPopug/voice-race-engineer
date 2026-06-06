@@ -39,6 +39,14 @@ Upgrade to GitHub Pro or make this repository public to enable this feature.
 - merge выполняется только после зеленого CI;
 - прямой push и force push в `main` запрещены процессом, но пока не GitHub-политикой.
 
+Для текущего clone настроен версионируемый `.githooks/pre-push`, который блокирует обычный direct push в `main`. Он подключается командой:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Hook является дополнительным локальным guardrail, но не серверной защитой: его можно обойти через `--no-verify`, GitHub API или другой clone.
+
 ## Applying Protection After Upgrade
 
 После изменения тарифа настроить branch protection или ruleset и проверить:
