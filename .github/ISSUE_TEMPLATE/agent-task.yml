@@ -55,6 +55,8 @@ body:
       description: Observable conditions required to complete the task.
       placeholder: |
         - [ ] New behavior is covered by tests
+        - [ ] dotnet format --verify-no-changes passes
+        - [ ] Release build passes
         - [ ] Full test suite passes
         - [ ] git diff --check passes
     validations:

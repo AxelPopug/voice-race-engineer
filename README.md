@@ -89,6 +89,8 @@ dotnet test VoiceRaceEngineer.slnx
 
 Общие настройки сборки находятся в `Directory.Build.props`: C# 14, nullable reference types, актуальные analyzers, warnings as errors и deterministic builds. Версии NuGet-пакетов управляются централизованно через `Directory.Packages.props`.
 
+Полный quality gate и code-style соглашения описаны в [Code Quality](docs/development/code-quality.md).
+
 ## Compliance
 
 До письменного разъяснения iRacing проект предназначен только для личной разработки и тестирования в Test Drive, AI Racing и согласованных закрытых Hosted-сессиях.

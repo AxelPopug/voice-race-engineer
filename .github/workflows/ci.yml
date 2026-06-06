@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Format, build, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.108
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Restore
+        run: dotnet restore VoiceRaceEngineer.slnx --locked-mode
+
+      - name: Verify formatting
+        run: dotnet format VoiceRaceEngineer.slnx --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build VoiceRaceEngineer.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test VoiceRaceEngineer.slnx --configuration Release --no-build --no-restore

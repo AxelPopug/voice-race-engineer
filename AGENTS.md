@@ -30,17 +30,22 @@
 После изменений:
 
 ```bash
-dotnet test VoiceRaceEngineer.slnx --disable-build-servers -m:1
+dotnet restore VoiceRaceEngineer.slnx --locked-mode
+dotnet format VoiceRaceEngineer.slnx --verify-no-changes --no-restore
+dotnet build VoiceRaceEngineer.slnx --configuration Release --no-restore
+dotnet test VoiceRaceEngineer.slnx --configuration Release --no-build --no-restore
 git diff --check
 ```
 
-В sandbox может потребоваться запуск `dotnet test` с разрешением на локальный IPC.
+В sandbox для `dotnet` команд может потребоваться разрешение на локальный IPC.
 
 ## Code Quality
 
 - Target framework: `net10.0`; Windows adapters используют `net10.0-windows`.
 - C# 14 разрешен, но новая syntax применяется только когда улучшает читаемость.
 - Nullable, analyzers и warnings-as-errors обязательны.
+- Все style и analyzer rules определяются в `.editorconfig` и `Directory.Build.props`.
+- Версии NuGet указываются только в `Directory.Packages.props`; lock files коммитятся.
 - Для стратегии использовать `decimal`, а не `double`, если нет измеренной причины иначе.
 - Публичные числовые значения должны иметь типизированные единицы.
 - Ошибочные или недостаточные данные возвращают explicit result, а не правдоподобное число.
@@ -76,6 +81,7 @@ git diff --check
 
 - [Technical roadmap](docs/plan/0001-technical-roadmap.md)
 - [Agent execution plan](docs/plan/0002-agent-execution-plan.md)
+- [Code quality](docs/development/code-quality.md)
 - [Strategy Engine architecture](docs/architecture/0001-strategy-engine.md)
 - [iRacing SDK research](docs/research/0002-dotnet-iracing-sdk-libraries.md)
 - [Local STT/TTS research](docs/research/0003-local-stt-tts-stack.md)
