@@ -48,7 +48,9 @@ dotnet format VoiceRaceEngineer.slnx
 - Всегда использовать braces.
 - Interfaces начинаются с `I`.
 - Types и non-field members используют PascalCase.
-- Private fields используют camelCase без дополнительного prefix.
+- Private/internal fields используют `_camelCase`.
+- Constants используют PascalCase.
+- Максимальная длина строки: 130 символов.
 - Публичные гоночные значения используют типизированные единицы.
 - В Strategy Core для расчетов используется `decimal`.
 - C# 14 применяется там, где улучшает читаемость, а не ради демонстрации новой syntax.
@@ -64,3 +66,12 @@ dotnet format VoiceRaceEngineer.slnx
 ## CI
 
 GitHub Actions запускает quality gate на каждом push в `main` и на pull request. Windows-specific adapters позднее получат отдельный Windows job; кроссплатформенные Domain и Strategy проекты остаются проверяемыми на Linux.
+
+## Источник соглашений
+
+Базовые naming, spacing и Rider/ReSharper wrapping rules адаптированы из локальных репозиториев:
+
+- `/Users/gorshkov/RiderProjects/scenarios/.editorconfig`;
+- `/Users/gorshkov/RiderProjects/scenarios-runtime/.editorconfig`.
+
+Не перенесены исторические отключения analyzer rules, табы, CRLF и отсутствие final newline. Для нового проекта сохранен более строгий quality gate.

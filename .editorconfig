@@ -9,6 +9,12 @@ indent_style = space
 indent_size = 4
 
 [*.cs]
+max_line_length = 130
+
+# Treat the broad analyzer categories as enforceable unless explicitly relaxed.
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
+
 # Language and qualification
 csharp_style_namespace_declarations = file_scoped:warning
 csharp_style_prefer_primary_constructors = false:suggestion
@@ -39,6 +45,7 @@ csharp_style_prefer_readonly_struct = true:suggestion
 csharp_style_prefer_readonly_struct_member = true:suggestion
 csharp_style_prefer_static_local_function = true:warning
 csharp_style_prefer_static_anonymous_function = true:suggestion
+csharp_style_expression_bodied_operators = true:warning
 
 # Control flow
 csharp_prefer_braces = true:warning
@@ -51,11 +58,22 @@ csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
 csharp_new_line_before_catch = true
 csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_anonymous_types = false
+csharp_new_line_before_members_in_object_initializers = true
 csharp_indent_case_contents = true
 csharp_indent_switch_labels = true
 csharp_space_after_cast = false
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = false
+dotnet_sort_system_directives_first = true
 
 # Naming
 dotnet_naming_rule.interfaces_start_with_i.severity = warning
@@ -70,20 +88,55 @@ dotnet_naming_rule.non_field_members_use_pascal_case.severity = warning
 dotnet_naming_rule.non_field_members_use_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_use_pascal_case.style = pascal_case
 
-dotnet_naming_rule.private_fields_use_camel_case.severity = warning
-dotnet_naming_rule.private_fields_use_camel_case.symbols = private_fields
-dotnet_naming_rule.private_fields_use_camel_case.style = camel_case
+dotnet_naming_rule.private_internal_fields_use_underscore_camel_case.severity = warning
+dotnet_naming_rule.private_internal_fields_use_underscore_camel_case.symbols = private_internal_fields
+dotnet_naming_rule.private_internal_fields_use_underscore_camel_case.style = underscore_camel_case
+
+dotnet_naming_rule.constant_fields_use_pascal_case.severity = warning
+dotnet_naming_rule.constant_fields_use_pascal_case.symbols = constant_fields
+dotnet_naming_rule.constant_fields_use_pascal_case.style = pascal_case
 
 dotnet_naming_symbols.interfaces.applicable_kinds = interface
 dotnet_naming_symbols.types.applicable_kinds = class,struct,interface,enum,delegate
 dotnet_naming_symbols.non_field_members.applicable_kinds = property,event,method
-dotnet_naming_symbols.private_fields.applicable_kinds = field
-dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
+dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private,internal
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.required_modifiers = const
 
 dotnet_naming_style.prefix_i.required_prefix = I
 dotnet_naming_style.prefix_i.capitalization = pascal_case
 dotnet_naming_style.pascal_case.capitalization = pascal_case
-dotnet_naming_style.camel_case.capitalization = camel_case
+dotnet_naming_style.underscore_camel_case.required_prefix = _
+dotnet_naming_style.underscore_camel_case.capitalization = camel_case
+
+# Rider/ReSharper wrapping rules adopted from scenarios-runtime.
+resharper_csharp_wrap_array_initializer_style = chop_if_long
+resharper_csharp_wrap_before_extends_colon = true
+resharper_csharp_wrap_before_first_method_call = true
+resharper_csharp_wrap_chained_method_calls = chop_if_long
+resharper_csharp_wrap_list_pattern = chop_if_long
+resharper_csharp_new_line_before_while = true
+resharper_csharp_parentheses_redundancy_style = remove
+resharper_csharp_place_accessorholder_attribute_on_same_line = false
+resharper_csharp_place_accessor_attribute_on_same_line = false
+resharper_csharp_place_expr_accessor_on_single_line = true
+resharper_csharp_place_expr_method_on_single_line = true
+resharper_csharp_place_field_attribute_on_same_line = false
+resharper_csharp_place_simple_embedded_statement_on_same_line = false
+resharper_csharp_wrap_after_declaration_lpar = true
+resharper_csharp_wrap_after_invocation_lpar = true
+resharper_csharp_wrap_arguments_style = chop_if_long
+resharper_csharp_wrap_before_first_type_parameter_constraint = true
+resharper_csharp_wrap_extends_list_style = chop_if_long
+resharper_csharp_wrap_parameters_style = chop_if_long
+resharper_csharp_blank_lines_around_field = 0
+resharper_csharp_blank_lines_around_single_line_field = 0
+resharper_csharp_blank_lines_around_single_line_invocable = 1
+resharper_csharp_keep_blank_lines_in_code = 1
+resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_csharp_blank_lines_between_using_groups = 1
+resharper_csharp_align_multiline_binary_expressions_chain = false
 
 [*.{csproj,props,targets,slnx,xml}]
 indent_size = 2
