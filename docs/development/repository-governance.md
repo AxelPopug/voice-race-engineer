@@ -28,14 +28,6 @@
 
 Обязательный approval временно отключен: единственный collaborator не может одобрить собственный pull request. После добавления второго reviewer следует включить минимум одно approval и сброс approvals после последнего push.
 
-Для текущего clone настроен версионируемый `.githooks/pre-push`, который блокирует обычный direct push в `main`. Он подключается командой:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-Hook является дополнительным локальным guardrail, но не серверной защитой: его можно обойти через `--no-verify`, GitHub API или другой clone.
-
 ## Protection Verification
 
 При изменении правил проверить:
