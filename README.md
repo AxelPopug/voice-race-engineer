@@ -70,8 +70,12 @@ flowchart LR
 
 - [ADR: архитектура локального AI race engineer](docs/adr/0001-local-ai-race-engineer-overlay.md)
 - [Анализ существующих open-source overlays и Crew Chief](docs/research/0001-github-overlay-landscape.md)
+- [Исследование C#/.NET библиотек iRacing SDK](docs/research/0002-dotnet-iracing-sdk-libraries.md)
+- [Исследование локального STT/TTS стека](docs/research/0003-local-stt-tts-stack.md)
+- [Архитектура Strategy Engine](docs/architecture/0001-strategy-engine.md)
+- [Общий технический roadmap](docs/plan/0001-technical-roadmap.md)
 
-Следующий этап — технический spike чтения iRacing telemetry и расчетов топлива.
+Следующий milestone — `Replay Fuel Engineer`: детерминированные расчеты топлива и голосовые ответы над replay fixture без запущенного iRacing.
 
 ## Compliance
 
