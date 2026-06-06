@@ -66,6 +66,7 @@ git diff --check
 - Изменения solution, central package management и общих build-файлов выполняет только integration task.
 - Контракты сначала согласуются отдельной задачей; implementation-задачи зависят от них.
 - Агент не должен отменять или переписывать изменения других агентов.
+- Агент никогда не пушит напрямую в `main`; используется feature branch и pull request.
 
 ## Task Completion Report
 
@@ -82,6 +83,7 @@ git diff --check
 - [Technical roadmap](docs/plan/0001-technical-roadmap.md)
 - [Agent execution plan](docs/plan/0002-agent-execution-plan.md)
 - [Code quality](docs/development/code-quality.md)
+- [Repository governance](docs/development/repository-governance.md)
 - [Strategy Engine architecture](docs/architecture/0001-strategy-engine.md)
 - [iRacing SDK research](docs/research/0002-dotnet-iracing-sdk-libraries.md)
 - [Local STT/TTS research](docs/research/0003-local-stt-tts-stack.md)

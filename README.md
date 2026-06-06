@@ -91,6 +91,8 @@ dotnet test VoiceRaceEngineer.slnx
 
 Полный quality gate и code-style соглашения описаны в [Code Quality](docs/development/code-quality.md).
 
+Правила работы с `main` и текущее ограничение GitHub branch protection описаны в [Repository Governance](docs/development/repository-governance.md).
+
 ## Compliance
 
 До письменного разъяснения iRacing проект предназначен только для личной разработки и тестирования в Test Drive, AI Racing и согласованных закрытых Hosted-сессиях.
