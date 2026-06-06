@@ -15,7 +15,7 @@ public sealed class FuelPlanningTests
 
         Assert.True(result.CanFinish);
         Assert.Equal(new Liters(16m), result.FuelRequired);
-        Assert.Equal(new Liters(4m), result.FuelMargin);
+        Assert.Equal(new LitersDelta(4m), result.FuelMargin);
         Assert.Equal(Liters.Zero, result.FuelToAdd);
     }
 
@@ -29,7 +29,7 @@ public sealed class FuelPlanningTests
             new Liters(1m));
 
         Assert.False(result.CanFinish);
-        Assert.Equal(new Liters(-2m), result.FuelMargin);
+        Assert.Equal(new LitersDelta(-2m), result.FuelMargin);
         Assert.Equal(new Liters(2m), result.FuelToAdd);
     }
 

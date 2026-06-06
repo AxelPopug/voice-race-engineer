@@ -88,7 +88,7 @@ public sealed record FuelToFinishResult(
     Liters PredictedBurn,
     Liters Reserve,
     Liters FuelRequired,
-    Liters FuelMargin,
+    LitersDelta FuelMargin,
     Liters FuelToAdd,
     bool CanFinish);
 
