@@ -26,6 +26,7 @@
 1. Прочитать связанную задачу и документы из `docs/`.
 2. Проверить `git status`.
 3. Не изменять файлы вне указанной в задаче write-зоны без явной необходимости.
+4. Определить Doc Impact: какие `docs/` нужно обновить или почему обновление не требуется.
 
 После изменений:
 
@@ -38,6 +39,14 @@ git diff --check
 ```
 
 В sandbox для `dotnet` команд может потребоваться разрешение на локальный IPC.
+
+Перед каждым commit:
+
+1. Зафиксировать Doc Impact в evidence audit или PR body.
+2. Если принято решение, изменены архитектурные границы, roadmap, research или workflow — обновить
+   соответствующий документ в `docs/`.
+3. Если документация не меняется — явно записать `Doc Impact: none` с причиной.
+4. Получить evidence-audit approval для точного staged diff.
 
 ## Code Quality
 
@@ -75,6 +84,7 @@ git diff --check
 - что реализовано;
 - какие файлы изменены;
 - какие решения или assumptions приняты;
+- Doc Impact: какие документы обновлены или почему обновление не требовалось;
 - какие команды проверки выполнены;
 - известные ограничения и последующие задачи.
 
@@ -83,6 +93,7 @@ git diff --check
 - [Technical roadmap](docs/plan/0001-technical-roadmap.md)
 - [Agent execution plan](docs/plan/0002-agent-execution-plan.md)
 - [Code quality](docs/development/code-quality.md)
+- [Documentation workflow](docs/development/documentation.md)
 - [Repository governance](docs/development/repository-governance.md)
 - [Strategy Engine architecture](docs/architecture/0001-strategy-engine.md)
 - [iRacing SDK research](docs/research/0002-dotnet-iracing-sdk-libraries.md)
