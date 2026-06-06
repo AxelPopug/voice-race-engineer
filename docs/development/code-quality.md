@@ -37,6 +37,7 @@ dotnet format VoiceRaceEngineer.slnx
 
 - Все compiler и analyzer warnings являются ошибками.
 - Code-style diagnostics с severity `warning` проверяются во время build.
+- XML documentation generation включена для build-time проверки unused imports; `CS1591` отключен, поэтому XML-комментарии не обязательны для каждого public member.
 - Нельзя глобально отключать analyzer rule для обхода конкретной проблемы.
 - Локальное подавление допустимо только с коротким объяснением и отдельным review.
 - `dotnet format --verify-no-changes` обязан завершаться без изменений.
