@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VoiceRaceEngineer.Domain/VoiceRaceEngineer.Domain.csproj" />
+    <Project Path="src/VoiceRaceEngineer.Strategy/VoiceRaceEngineer.Strategy.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VoiceRaceEngineer.Strategy.Tests/VoiceRaceEngineer.Strategy.Tests.csproj" />
+  </Folder>
+</Solution>

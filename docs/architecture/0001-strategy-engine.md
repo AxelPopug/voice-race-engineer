@@ -1,7 +1,7 @@
 # Architecture: Deterministic Strategy Engine
 
 - Статус: Proposed
-- Runtime: `.NET 8`
+- Runtime: `.NET 10 LTS`, C# 14
 - Scope: топливная стратегия и детерминированные what-if расчеты
 
 ## Главный принцип

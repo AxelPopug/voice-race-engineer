@@ -96,7 +96,7 @@ flowchart LR
 
 ### 1. Live connection
 
-- Запустить `.NET 8 Windows` console-приложение.
+- Запустить `net10.0-windows` console-приложение с подключенной `net8.0` библиотекой.
 - Читать минимальный набор переменных на частоте SDK.
 - Измерять dropped frames, allocations и исключения.
 

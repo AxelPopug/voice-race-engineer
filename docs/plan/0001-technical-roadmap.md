@@ -7,7 +7,7 @@
 
 | Область | Начальный выбор | Почему |
 |---|---|---|
-| Runtime | `.NET 8` на Windows | SDK, WPF и выбранные библиотеки |
+| Runtime | `.NET 10 LTS`, C# 14 на Windows | Новый проект, LTS, актуальный runtime и язык |
 | Telemetry | `SVappsLAB.iRacingTelemetrySDK` за собственным adapter | Live + Session Info + `.ibt`, Apache-2.0 |
 | Strategy | Собственное pure deterministic ядро | Числа тестируемы и не зависят от LLM |
 | Audio capture | NAudio / WASAPI | Зрелая Windows/.NET интеграция |
@@ -45,13 +45,15 @@ fixtures/
 
 Результат:
 
-- установлен `.NET 8 SDK` на dev и Windows test machine;
+- установлен `.NET 10 SDK` на dev и Windows test machine;
 - `global.json` фиксирует SDK;
 - создан solution и CI для pure cross-platform tests;
+- C# 14, nullable, analyzers, warnings-as-errors и deterministic builds включены централизованно;
+- версии NuGet управляются через Central Package Management;
 - Windows-only проекты отделены от доменного ядра;
 - лицензии зависимостей и моделей фиксируются отдельным manifest.
 
-Замечание: на текущем Mac установлен только `.NET 9 SDK`; Windows-интеграция и WPF здесь не проверяются.
+На текущем Mac установлен `.NET 10.0.108` и создается кроссплатформенное ядро. Windows-интеграция и WPF проверяются отдельно на Windows test machine.
 
 ## Этап 1: Pure Strategy Core
 

@@ -32,7 +32,7 @@
 ## Планируемая архитектура
 
 - Windows-only desktop application;
-- `.NET 8` и минимальный `WPF` overlay;
+- `.NET 10 LTS`, C# 14 и минимальный `WPF` overlay;
 - официальный iRacing SDK/shared memory как источник live telemetry;
 - детерминированный Strategy Engine для топлива и стратегии;
 - локальные Speech-to-Text и Text-to-Speech;
@@ -76,6 +76,17 @@ flowchart LR
 - [Общий технический roadmap](docs/plan/0001-technical-roadmap.md)
 
 Следующий milestone — `Replay Fuel Engineer`: детерминированные расчеты топлива и голосовые ответы над replay fixture без запущенного iRacing.
+
+## Разработка
+
+Требуется `.NET 10 SDK`. Версия SDK зафиксирована в `global.json`.
+
+```bash
+dotnet restore
+dotnet test VoiceRaceEngineer.slnx
+```
+
+Общие настройки сборки находятся в `Directory.Build.props`: C# 14, nullable reference types, актуальные analyzers, warnings as errors и deterministic builds. Версии NuGet-пакетов управляются централизованно через `Directory.Packages.props`.
 
 ## Compliance
 
