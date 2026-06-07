@@ -25,13 +25,11 @@ public sealed record CalculationStep
 
 public sealed record CalculationTrace
 {
-    public CalculationTrace(IEnumerable<CalculationStep> steps)
+    public CalculationTrace(IReadOnlyList<CalculationStep> steps)
     {
         ArgumentNullException.ThrowIfNull(steps);
 
-        var orderedSteps = steps as IReadOnlyList<CalculationStep> ?? [.. steps];
-
-        foreach (var step in orderedSteps)
+        foreach (var step in steps)
         {
             if (step is null)
             {
@@ -39,7 +37,7 @@ public sealed record CalculationTrace
             }
         }
 
-        Steps = orderedSteps;
+        Steps = steps;
     }
 
     public IReadOnlyList<CalculationStep> Steps { get; }
