@@ -23,7 +23,7 @@ public sealed record CalculationStep
     public string Value { get; }
 }
 
-public sealed record CalculationTrace
+public sealed class CalculationTrace : IEquatable<CalculationTrace>
 {
     public CalculationTrace(IReadOnlyList<CalculationStep> steps)
     {
@@ -37,10 +37,34 @@ public sealed record CalculationTrace
             }
         }
 
-        Steps = steps;
+        Steps = [.. steps];
     }
 
     public IReadOnlyList<CalculationStep> Steps { get; }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as CalculationTrace);
+    }
+
+    public bool Equals(CalculationTrace? other)
+    {
+        return other is not null &&
+            Steps.Count == other.Steps.Count &&
+            Steps.SequenceEqual(other.Steps);
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = new HashCode();
+
+        foreach (var step in Steps)
+        {
+            hashCode.Add(step);
+        }
+
+        return hashCode.ToHashCode();
+    }
 
     public static CalculationTrace Empty { get; } = new CalculationTrace([]);
 }
