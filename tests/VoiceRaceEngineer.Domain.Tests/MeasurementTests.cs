@@ -10,6 +10,31 @@ public sealed class MeasurementTests
         value => new Percentage(value),
     ];
 
+    private static readonly Type[] _unitTypes =
+    [
+        typeof(Liters),
+        typeof(LitersDelta),
+        typeof(LitersPerLap),
+        typeof(Laps),
+        typeof(Percentage),
+    ];
+
+    private static readonly (Type ownerType, string operatorName, Type operandType, Type returnType)[] _expectedBinaryOperators =
+    [
+        (typeof(Liters), "op_Addition", typeof(Liters), typeof(Liters)),
+        (typeof(Liters), "op_Subtraction", typeof(Liters), typeof(LitersDelta)),
+        (typeof(LitersDelta), "op_Addition", typeof(LitersDelta), typeof(LitersDelta)),
+        (typeof(LitersDelta), "op_Subtraction", typeof(LitersDelta), typeof(LitersDelta)),
+    ];
+
+    public static TheoryData<Type, string, Type, Type> PublicBinaryOperatorContractData => new()
+    {
+        { typeof(Liters), "op_Addition", typeof(Liters), typeof(Liters) },
+        { typeof(Liters), "op_Subtraction", typeof(Liters), typeof(LitersDelta) },
+        { typeof(LitersDelta), "op_Addition", typeof(LitersDelta), typeof(LitersDelta) },
+        { typeof(LitersDelta), "op_Subtraction", typeof(LitersDelta), typeof(LitersDelta) },
+    };
+
     [Theory]
     [MemberData(nameof(NonNegativeFactories))]
     public void MeasurementConstructorsRejectNegativeValues(Func<decimal, object> createMeasurement)
@@ -48,30 +73,51 @@ public sealed class MeasurementTests
         Assert.Equal(2m, new LitersDelta(2m).Value);
     }
 
-    [Fact]
-    public void UnitOperatorsDoNotExposeCrossUnitArithmetic()
+    [Theory]
+    [MemberData(nameof(PublicBinaryOperatorContractData))]
+    public void PublicBinaryUnitOperatorsUseExpectedSignatures(
+        Type ownerType,
+        string operatorName,
+        Type operandType,
+        Type returnType)
     {
-        var measurementTypes = new[] { typeof(Liters), typeof(LitersDelta), typeof(LitersPerLap), typeof(Laps), typeof(Percentage) };
+        var publicOperator = ownerType.GetMethod(
+            operatorName,
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static,
+            null,
+            [operandType, operandType],
+            null);
 
-        var publicOperators = measurementTypes
+        Assert.NotNull(publicOperator);
+        Assert.Equal(operandType, publicOperator!.GetParameters()[0].ParameterType);
+        Assert.Equal(operandType, publicOperator.GetParameters()[1].ParameterType);
+        Assert.Equal(returnType, publicOperator.ReturnType);
+        Assert.Contains(publicOperator.ReturnType, _unitTypes);
+    }
+
+    [Fact]
+    public void UnitTypesExposeOnlyExpectedPublicBinaryOperators()
+    {
+        var expectedOperatorSignatures = _expectedBinaryOperators
+            .Select(operatorInfo => (operatorInfo.ownerType, operatorInfo.operatorName, operatorInfo.operandType, operatorInfo.operandType, operatorInfo.returnType))
+            .ToHashSet();
+
+        var publicOperatorSignatures = _unitTypes
             .SelectMany(type => type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
-            .Where(method => method.IsSpecialName && method.Name is "op_Addition" or "op_Subtraction");
-
-        foreach (var publicOperator in publicOperators)
-        {
-            var parameterTypes = publicOperator.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
-
-            Assert.Equal(parameterTypes[0], parameterTypes[1]);
-            Assert.Contains(publicOperator.ReturnType, measurementTypes);
-
-            if (parameterTypes[0] == typeof(Liters) && publicOperator.Name == "op_Subtraction")
+            .Where(method => method.IsSpecialName && method.Name is "op_Addition" or "op_Subtraction")
+            .Select(method =>
             {
-                Assert.Equal(typeof(LitersDelta), publicOperator.ReturnType);
-            }
-            else
-            {
-                Assert.Equal(parameterTypes[0], publicOperator.ReturnType);
-            }
-        }
+                var parameters = method.GetParameters();
+                return (
+                    method.DeclaringType!,
+                    method.Name,
+                    parameters[0].ParameterType,
+                    parameters[1].ParameterType,
+                    method.ReturnType);
+            })
+            .ToHashSet();
+
+        Assert.Equal(expectedOperatorSignatures.Count, publicOperatorSignatures.Count);
+        Assert.All(expectedOperatorSignatures, expected => Assert.Contains(expected, publicOperatorSignatures));
     }
 }
