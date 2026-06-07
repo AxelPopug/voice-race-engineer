@@ -17,9 +17,10 @@ public static class RemainingDistance
 
         decimal playerProgress = completedLaps.Value + currentLapProgress.Value;
         decimal remainingEquivalentDistance = decimal.Max(0m, scheduledLaps.Value - playerProgress);
+        var remainingDistance = new Laps(remainingEquivalentDistance);
 
         return new LapLimitedRemainingDistanceResult(
-            new Laps(remainingEquivalentDistance),
+            remainingDistance,
             ToFinishLineCrossings(remainingEquivalentDistance),
             remainingEquivalentDistance == 0m);
     }
@@ -61,22 +62,4 @@ public static class RemainingDistance
             throw new ArgumentOutOfRangeException(parameterName, value, "Lap progress must be between 0 and 1.");
         }
     }
-}
-
-public sealed record LapLimitedRemainingDistanceResult(
-    Laps RemainingEquivalentDistance,
-    FinishLineCrossings RemainingFinishLineCrossings,
-    bool IsFinished);
-
-public readonly record struct FinishLineCrossings
-{
-    public FinishLineCrossings(int value)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(value);
-        Value = value;
-    }
-
-    public int Value { get; }
-
-    public static FinishLineCrossings Zero => new(0);
 }

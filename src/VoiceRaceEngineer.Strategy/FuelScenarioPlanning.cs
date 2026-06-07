@@ -12,16 +12,17 @@ public static class FuelScenarioPlanning
         LitersPerLap planningConsumption,
         Laps savingDistance)
     {
-        EnsureNonNegative(fuelRemaining.Value, nameof(fuelRemaining));
-        EnsureNonNegative(reserve.Value, nameof(reserve));
-        EnsureNonNegative(normalRemainingDistance.Value, nameof(normalRemainingDistance));
-        EnsureNonNegative(extraDistance.Value, nameof(extraDistance));
-        EnsurePositive(planningConsumption.Value, nameof(planningConsumption));
-        EnsurePositive(savingDistance.Value, nameof(savingDistance));
+        ArgumentOutOfRangeException.ThrowIfNegative(fuelRemaining.Value, nameof(fuelRemaining));
+        ArgumentOutOfRangeException.ThrowIfNegative(reserve.Value, nameof(reserve));
+        ArgumentOutOfRangeException.ThrowIfNegative(normalRemainingDistance.Value, nameof(normalRemainingDistance));
+        ArgumentOutOfRangeException.ThrowIfNegative(extraDistance.Value, nameof(extraDistance));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(planningConsumption.Value, nameof(planningConsumption));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(savingDistance.Value, nameof(savingDistance));
 
         decimal availableForBurn = fuelRemaining.Value - reserve.Value;
         var targetDistance = new Laps(normalRemainingDistance.Value + extraDistance.Value);
-        EnsurePositive(targetDistance.Value, nameof(normalRemainingDistance));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(targetDistance.Value, nameof(normalRemainingDistance));
+
         var effectiveSavingDistance = new Laps(decimal.Min(savingDistance.Value, targetDistance.Value));
         var normalConsumptionDistance = new Laps(targetDistance.Value - effectiveSavingDistance.Value);
         decimal fuelNeededAtNormalConsumption = normalConsumptionDistance.Value * planningConsumption.Value;
@@ -33,9 +34,9 @@ public static class FuelScenarioPlanning
             isImpossible
                 ? 0m
                 : CalculateTargetConsumption(planningConsumption.Value, effectiveSavingDistance.Value, fuelForSavingDistance));
-        var savingPerLap = new LitersPerLap(decimal.Max(0m, planningConsumption.Value - targetConsumption.Value));
+        var savingPerLap = new LitersPerLap(Math.Max(0m, planningConsumption.Value - targetConsumption.Value));
         var savingPercentage = new Percentage(savingPerLap.Value / planningConsumption.Value * 100m);
-        var status = DetermineStatus(isImpossible, savingPerLap.Value);
+        var status = DetermineStatus(isImpossible, savingPerLap);
 
         return new FuelScenarioPlanningResult(
             targetDistance,
@@ -59,40 +60,15 @@ public static class FuelScenarioPlanning
             : fuelForSavingDistance / effectiveSavingDistance;
     }
 
-    private static FuelScenarioPlanningStatus DetermineStatus(bool isImpossible, decimal savingPerLap)
+    private static FuelScenarioPlanningStatus DetermineStatus(
+        bool isImpossible,
+        LitersPerLap savingPerLap)
     {
-        return isImpossible
-            ? FuelScenarioPlanningStatus.Impossible
-            : savingPerLap == 0m
-                ? FuelScenarioPlanningStatus.AlreadyAchieved
-                : FuelScenarioPlanningStatus.Possible;
+        return (isImpossible, savingPerLap == LitersPerLap.Zero) switch
+        {
+            (true, _) => FuelScenarioPlanningStatus.Impossible,
+            (false, true) => FuelScenarioPlanningStatus.AlreadyAchieved,
+            (false, false) => FuelScenarioPlanningStatus.Possible
+        };
     }
-
-    private static void EnsureNonNegative(decimal value, string parameterName)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(value, parameterName);
-    }
-
-    private static void EnsurePositive(decimal value, string parameterName)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value, parameterName);
-    }
-}
-
-public sealed record FuelScenarioPlanningResult(
-    Laps TargetDistance,
-    Laps RequestedSavingDistance,
-    Laps EffectiveSavingDistance,
-    Laps NormalConsumptionDistance,
-    LitersPerLap TargetConsumption,
-    LitersPerLap SavingPerLap,
-    Percentage SavingPercentage,
-    FuelScenarioPlanningStatus Status,
-    bool IsMathematicallyPossible);
-
-public enum FuelScenarioPlanningStatus
-{
-    AlreadyAchieved,
-    Possible,
-    Impossible
 }
