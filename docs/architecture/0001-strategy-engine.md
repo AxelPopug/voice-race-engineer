@@ -32,6 +32,7 @@ Strategy Engine не имеет доступа к SDK, системным час
 
 ```csharp
 public readonly record struct Liters(decimal Value);
+public readonly record struct LitersDelta(decimal Value);
 public readonly record struct LitersPerLap(decimal Value);
 public readonly record struct Laps(decimal Value);
 public readonly record struct Seconds(decimal Value);
@@ -166,6 +167,9 @@ fuel_required = predicted_burn + R
 fuel_margin = F - fuel_required
 fuel_to_add = max(0, fuel_required - F)
 ```
+
+`Liters` представляет физический неотрицательный объем топлива. `fuel_margin`
+может быть отрицательным, поэтому возвращается как signed `LitersDelta`.
 
 Reserve поддерживает фиксированные литры и эквивалент кругов.
 
