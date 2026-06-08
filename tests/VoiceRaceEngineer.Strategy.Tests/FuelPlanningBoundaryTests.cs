@@ -18,25 +18,19 @@ public sealed class FuelPlanningBoundaryTests
             {
                 foreach (decimal reserve in reserveCases)
                 {
-                    FuelToFinishResult? previous = null;
+                    var results = distanceCases
+                        .Select(distance =>
+                            FuelPlanning.CalculateFuelToFinish(
+                                new Liters(fuelRemaining),
+                                new Laps(distance),
+                                new LitersPerLap(planningConsumption),
+                                new Liters(reserve)))
+                        .ToList();
 
-                    foreach (decimal remainingDistance in distanceCases)
-                    {
-                        var current = FuelPlanning.CalculateFuelToFinish(
-                            new Liters(fuelRemaining),
-                            new Laps(remainingDistance),
-                            new LitersPerLap(planningConsumption),
-                            new Liters(reserve));
-
-                        if (previous is not null)
-                        {
-                            Assert.True(current.FuelRequired.Value >= previous.FuelRequired.Value);
-                            Assert.True(current.FuelMargin.Value <= previous.FuelMargin.Value);
-                            Assert.True(current.FuelToAdd.Value >= previous.FuelToAdd.Value);
-                        }
-
-                        previous = current;
-                    }
+                    AssertMonotonic(results, (previous, current) =>
+                        current.FuelRequired.Value >= previous.FuelRequired.Value
+                        && current.FuelMargin.Value <= previous.FuelMargin.Value
+                        && current.FuelToAdd.Value >= previous.FuelToAdd.Value);
                 }
             }
         }
@@ -48,43 +42,31 @@ public sealed class FuelPlanningBoundaryTests
         decimal[] fuelCases = [0m, 1m, 4m, 12m, 25m];
         decimal[] reserveCases = [0m, 0.5m, 2m, 6m];
 
-        FuelToFinishResult? previousFuelResult = null;
+        var fuelResults = fuelCases
+            .Select(fuelRemaining =>
+                FuelPlanning.CalculateFuelToFinish(
+                    new Liters(fuelRemaining),
+                    new Laps(4m),
+                    new LitersPerLap(2.5m),
+                    new Liters(1m)))
+            .ToList();
 
-        foreach (decimal fuelRemaining in fuelCases)
-        {
-            var current = FuelPlanning.CalculateFuelToFinish(
-                new Liters(fuelRemaining),
-                new Laps(4m),
-                new LitersPerLap(2.5m),
-                new Liters(1m));
+        AssertMonotonic(fuelResults,
+            (previous, current) => current.FuelMargin.Value >= previous.FuelMargin.Value
+                && current.FuelToAdd.Value <= previous.FuelToAdd.Value);
 
-            if (previousFuelResult is not null)
-            {
-                Assert.True(current.FuelMargin.Value >= previousFuelResult.FuelMargin.Value);
-                Assert.True(current.FuelToAdd.Value <= previousFuelResult.FuelToAdd.Value);
-            }
+        var reserveResults = reserveCases
+            .Select(reserve =>
+                FuelPlanning.CalculateFuelToFinish(
+                    new Liters(12m),
+                    new Laps(4m),
+                    new LitersPerLap(2.5m),
+                    new Liters(reserve)))
+            .ToList();
 
-            previousFuelResult = current;
-        }
-
-        FuelToFinishResult? previousReserveResult = null;
-
-        foreach (decimal reserve in reserveCases)
-        {
-            var current = FuelPlanning.CalculateFuelToFinish(
-                new Liters(12m),
-                new Laps(4m),
-                new LitersPerLap(2.5m),
-                new Liters(reserve));
-
-            if (previousReserveResult is not null)
-            {
-                Assert.True(current.FuelMargin.Value <= previousReserveResult.FuelMargin.Value);
-                Assert.True(current.FuelToAdd.Value >= previousReserveResult.FuelToAdd.Value);
-            }
-
-            previousReserveResult = current;
-        }
+        AssertMonotonic(reserveResults,
+            (previous, current) => current.FuelMargin.Value <= previous.FuelMargin.Value
+                && current.FuelToAdd.Value >= previous.FuelToAdd.Value);
     }
 
     [Fact]
@@ -127,65 +109,47 @@ public sealed class FuelPlanningBoundaryTests
         decimal[] reserveCases = [0m, 0.5m, 2m, 6m];
         decimal[] extraDistanceCases = [0.25m, 0.5m, 1m, 2m, 4m];
 
-        ExtraLapSavingResult? previousFuelResult = null;
+        var fuelResults = fuelCases
+            .Select(fuelRemaining =>
+                FuelPlanning.CalculateExtraLapSaving(
+                    new Liters(fuelRemaining),
+                    new Liters(1m),
+                    new Laps(5m),
+                    new Laps(1m),
+                    new LitersPerLap(3m)))
+            .ToList();
 
-        foreach (decimal fuelRemaining in fuelCases)
-        {
-            var current = FuelPlanning.CalculateExtraLapSaving(
-                new Liters(fuelRemaining),
-                new Liters(1m),
-                new Laps(5m),
-                new Laps(1m),
-                new LitersPerLap(3m));
+        AssertMonotonic(fuelResults,
+            (previous, current) => current.SavingPerLap.Value <= previous.SavingPerLap.Value
+                && current.SavingPercentage.Value <= previous.SavingPercentage.Value);
 
-            if (previousFuelResult is not null)
-            {
-                Assert.True(current.SavingPerLap.Value <= previousFuelResult.SavingPerLap.Value);
-                Assert.True(current.SavingPercentage.Value <= previousFuelResult.SavingPercentage.Value);
-            }
+        var reserveResults = reserveCases
+            .Select(reserve =>
+                FuelPlanning.CalculateExtraLapSaving(
+                    new Liters(18m),
+                    new Liters(reserve),
+                    new Laps(5m),
+                    new Laps(1m),
+                    new LitersPerLap(3m)))
+            .ToList();
 
-            previousFuelResult = current;
-        }
+        AssertMonotonic(reserveResults,
+            (previous, current) => current.SavingPerLap.Value >= previous.SavingPerLap.Value
+                && current.SavingPercentage.Value >= previous.SavingPercentage.Value);
 
-        ExtraLapSavingResult? previousReserveResult = null;
+        var extraDistanceResults = extraDistanceCases
+            .Select(extraDistance =>
+                FuelPlanning.CalculateExtraLapSaving(
+                    new Liters(18m),
+                    new Liters(1m),
+                    new Laps(5m),
+                    new Laps(extraDistance),
+                    new LitersPerLap(3m)))
+            .ToList();
 
-        foreach (decimal reserve in reserveCases)
-        {
-            var current = FuelPlanning.CalculateExtraLapSaving(
-                new Liters(18m),
-                new Liters(reserve),
-                new Laps(5m),
-                new Laps(1m),
-                new LitersPerLap(3m));
-
-            if (previousReserveResult is not null)
-            {
-                Assert.True(current.SavingPerLap.Value >= previousReserveResult.SavingPerLap.Value);
-                Assert.True(current.SavingPercentage.Value >= previousReserveResult.SavingPercentage.Value);
-            }
-
-            previousReserveResult = current;
-        }
-
-        ExtraLapSavingResult? previousExtraDistanceResult = null;
-
-        foreach (decimal extraDistance in extraDistanceCases)
-        {
-            var current = FuelPlanning.CalculateExtraLapSaving(
-                new Liters(18m),
-                new Liters(1m),
-                new Laps(5m),
-                new Laps(extraDistance),
-                new LitersPerLap(3m));
-
-            if (previousExtraDistanceResult is not null)
-            {
-                Assert.True(current.SavingPerLap.Value >= previousExtraDistanceResult.SavingPerLap.Value);
-                Assert.True(current.SavingPercentage.Value >= previousExtraDistanceResult.SavingPercentage.Value);
-            }
-
-            previousExtraDistanceResult = current;
-        }
+        AssertMonotonic(extraDistanceResults,
+            (previous, current) => current.SavingPerLap.Value >= previous.SavingPerLap.Value
+                && current.SavingPercentage.Value >= previous.SavingPercentage.Value);
     }
 
     [Fact]
@@ -247,6 +211,17 @@ public sealed class FuelPlanningBoundaryTests
             Laps.Zero,
             new Laps(1m),
             LitersPerLap.Zero));
+    }
+
+    private static void AssertMonotonic<T>(IReadOnlyList<T> values, Func<T, T, bool> isMonotonic)
+        where T : notnull
+    {
+        for (int index = 1; index < values.Count; index++)
+        {
+            var previous = values[index - 1];
+            var current = values[index];
+            Assert.True(isMonotonic(previous, current));
+        }
     }
 
     private static void AssertThrowsArgumentOutOfRange(Action testCode)
